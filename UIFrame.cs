@@ -38,7 +38,9 @@ namespace deVoid.UIFramework
         public Camera UICamera {
             get { return MainCanvas.worldCamera; }
         }
-
+        
+        public IWindowController CurrentWindow => windowLayer.CurrentWindow;
+        
         private void Awake() {
             if (initializeOnAwake) {
                 Initialize();    
@@ -80,8 +82,8 @@ namespace deVoid.UIFramework
         /// Shows a panel by its id, passing no Properties.
         /// </summary>
         /// <param name="screenId">Panel Id</param>
-        public void ShowPanel(string screenId) {
-            panelLayer.ShowScreenById(screenId);
+        public void ShowPanel(string screenId, bool animate = true) {
+            panelLayer.ShowScreenById(screenId, animate);
         }
 
         /// <summary>
@@ -91,43 +93,44 @@ namespace deVoid.UIFramework
         /// <param name="properties">Properties.</param>
         /// <typeparam name="T">The type of properties to be passed in.</typeparam>
         /// <seealso cref="IPanelProperties"/>
-        public void ShowPanel<T>(string screenId, T properties) where T : IPanelProperties {
-            panelLayer.ShowScreenById<T>(screenId, properties);
+        public void ShowPanel<T>(string screenId, T properties, bool animate = true) where T : IPanelProperties {
+            panelLayer.ShowScreenById<T>(screenId, properties, animate);
         }
 
         /// <summary>
         /// Hides the panel with the given id.
         /// </summary>
         /// <param name="screenId">Identifier.</param>
-        public void HidePanel(string screenId) {
-            panelLayer.HideScreenById(screenId);
+        public void HidePanel(string screenId, bool animate = true) {
+            panelLayer.HideScreenById(screenId, animate);
         }
 
         /// <summary>
         /// Opens the Window with the given Id, with no Properties.
         /// </summary>
         /// <param name="screenId">Identifier.</param>
-        public void OpenWindow(string screenId) {
-            windowLayer.ShowScreenById(screenId);
+        public void OpenWindow(string screenId, bool animate = true) {
+            windowLayer.ShowScreenById(screenId, animate);
         }
 
         /// <summary>
         /// Closes the Window with the given Id.
         /// </summary>
         /// <param name="screenId">Identifier.</param>
-        public void CloseWindow(string screenId) {
-            windowLayer.HideScreenById(screenId);
+        public void CloseWindow(string screenId, bool animate = true) {
+            windowLayer.HideScreenById(screenId, animate);
         }
         
         /// <summary>
         /// Closes the currently open window, if any is open
         /// </summary>
-        public void CloseCurrentWindow() {
+        public void CloseCurrentWindow(bool animate = true) {
             if (windowLayer.CurrentWindow != null) {
-                CloseWindow(windowLayer.CurrentWindow.ScreenId);    
+                Debug.Log($"Closing screen {windowLayer.CurrentWindow.ScreenId}");
+                CloseWindow(windowLayer.CurrentWindow.ScreenId, animate);    
             }
         }
-
+        
         /// <summary>
         /// Opens the Window with the given id, passing in Properties.
         /// </summary>
@@ -135,8 +138,8 @@ namespace deVoid.UIFramework
         /// <param name="properties">Properties.</param>
         /// <typeparam name="T">The type of properties to be passed in.</typeparam>
         /// <seealso cref="IWindowProperties"/>
-        public void OpenWindow<T>(string screenId, T properties) where T : IWindowProperties {
-            windowLayer.ShowScreenById<T>(screenId, properties);
+        public void OpenWindow<T>(string screenId, T properties, bool animate = true) where T : IWindowProperties {
+            windowLayer.ShowScreenById<T>(screenId, properties, animate);
         }
 
         /// <summary>
@@ -258,7 +261,11 @@ namespace deVoid.UIFramework
         public void CloseAllWindows(bool animate = true) {
             windowLayer.HideAll(animate);
         }
-
+        
+        public void CloseAllPanels(bool animate = true) {
+            panelLayer.HideAll(animate);
+        }
+        
         /// <summary>
         /// Checks if a given screen id is registered to either the Window or Panel layers
         /// </summary>

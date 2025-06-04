@@ -20,7 +20,15 @@ namespace deVoid.UIFramework
         [Tooltip("Animation that hides the screen")] 
         [SerializeField]
         private ATransitionComponent animOut;
+        
+        [Tooltip("Animation that put the screen in foreground")] 
+        [SerializeField]
+        private ATransitionComponent animForeground;
 
+        [Tooltip("Animation that put the screen in background")] 
+        [SerializeField]
+        private ATransitionComponent animBackground;
+        
         [Header("Screen properties")]
         [Tooltip(
             "This is the data payload and settings for this screen. You can rig this directly in a prefab and/or pass it when you show this screen")]
@@ -30,7 +38,7 @@ namespace deVoid.UIFramework
         /// <summary>
         /// Unique identifier for this ID. If using the default system, it should be the same name as the screen's Prefab.
         /// </summary>
-        public string ScreenId { get; set; }
+        [field: SerializeField]public string ScreenId { get; set; }
 
         /// <summary>
         /// Transition component for the showing up animation
@@ -77,7 +85,9 @@ namespace deVoid.UIFramework
         /// </summary>
         /// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
         public bool IsVisible { get; private set; }
-
+        
+        public bool IsAnimating { get; set; } = false;
+        
         /// <summary>
         /// The properties of this screen. Can contain
         /// serialized values, or passed in private values.
@@ -156,7 +166,17 @@ namespace deVoid.UIFramework
         protected virtual void HierarchyFixOnShow()
         {
         }
-
+        
+        public void ToForeground()
+        {
+            DoAnimation(animForeground, OnTransitionForegroundFinished, true);
+        }
+        
+        public void ToBackground()
+        {
+            DoAnimation(animBackground, OnTransitionBackgroundFinished, true);
+        }
+        
         /// <summary>
         /// Hides the screen
         /// </summary>
@@ -171,7 +191,8 @@ namespace deVoid.UIFramework
         /// Show this screen with the specified properties.
         /// </summary>
         /// <param name="props">The data for the screen.</param>
-        public void Show(IScreenProperties props = null)
+        /// /// <param name="animate">Should animation be played? (defaults to true)</param>
+        public void Show(IScreenProperties props = null, bool animate = true)
         {
             if (props != null)
             {
@@ -192,14 +213,15 @@ namespace deVoid.UIFramework
 
             if (!gameObject.activeSelf)
             {
-                DoAnimation(animIn, OnTransitionInFinished, true);
+                DoAnimation(animate? animIn : null, OnTransitionInFinished, true);
             }
             else
             {
-                if (InTransitionFinished != null)
-                {
-                    InTransitionFinished(this);
-                }
+                DoAnimation(animate? animForeground : null, OnTransitionInFinished,true);
+                // if (InTransitionFinished != null)
+                // {
+                //     InTransitionFinished(this);
+                // }
             }
         }
 
@@ -243,6 +265,16 @@ namespace deVoid.UIFramework
             {
                 OutTransitionFinished(this);
             }
+        }
+
+        private void OnTransitionBackgroundFinished()
+        {
+            
+        }
+
+        private void OnTransitionForegroundFinished()
+        {
+            
         }
     }
 }
