@@ -49,26 +49,26 @@ namespace deVoid.UIFramework
             controller.CloseRequest -= OnCloseRequestedByWindow;
         }
 
-        public override void ShowScreen(IWindowController screen) {
-            ShowScreen<IWindowProperties>(screen, null);
+        public override void ShowScreen(IWindowController screen, bool animate = true) {
+            ShowScreen<IWindowProperties>(screen, null, animate);
         }
 
-        public override void ShowScreen<TProp>(IWindowController screen, TProp properties) {
+        public override void ShowScreen<TProp>(IWindowController screen, TProp properties, bool animate = true) {
             IWindowProperties windowProp = properties as IWindowProperties;
 
             if (ShouldEnqueue(screen, windowProp)) {
                 EnqueueWindow(screen, properties);
             }
             else {
-                DoShow(screen, windowProp);
+                DoShow(screen, windowProp, animate);
             }
         }
 
-        public override void HideScreen(IWindowController screen) {
+        public override void HideScreen(IWindowController screen, bool animate = true) {
             if (screen == CurrentWindow) {
                 windowHistory.Pop();
                 AddTransition(screen);
-                screen.Hide();
+                screen.Hide(animate);
 
                 CurrentWindow = null;
 
@@ -144,11 +144,12 @@ namespace deVoid.UIFramework
             }
         }
 
-        private void DoShow(IWindowController screen, IWindowProperties properties) {
-            DoShow(new WindowHistoryEntry(screen, properties));
+        private void DoShow(IWindowController screen, IWindowProperties properties, bool animate = true) {
+            DoShow(new WindowHistoryEntry(screen, properties), animate);
         }
 
-        private void DoShow(WindowHistoryEntry windowEntry) {
+        private void DoShow(WindowHistoryEntry windowEntry, bool animate = true) {
+            //Debug.Log($"DoShow: {windowEntry.Screen.ScreenId} {animate}");
             if (CurrentWindow == windowEntry.Screen) {
                 Debug.LogWarning(
                     string.Format(
@@ -163,7 +164,12 @@ namespace deVoid.UIFramework
                      && !windowEntry.Screen.IsPopup) {
                 CurrentWindow.Hide();
             }
-
+            else if(CurrentWindow !=null && animate)
+            {
+                CurrentWindow.ToBackground();
+            }
+            
+            
             windowHistory.Push(windowEntry);
             AddTransition(windowEntry.Screen);
 
@@ -171,7 +177,7 @@ namespace deVoid.UIFramework
                 priorityParaLayer.DarkenBG();
             }
 
-            windowEntry.Show();
+            windowEntry.Show(animate);
 
             CurrentWindow = windowEntry.Screen;
         }

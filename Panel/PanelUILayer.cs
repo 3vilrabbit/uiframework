@@ -24,16 +24,16 @@ namespace deVoid.UIFramework {
             }
         }
 
-        public override void ShowScreen(IPanelController screen) {
-            screen.Show();
+        public override void ShowScreen(IPanelController screen, bool animate = true) {
+            screen.Show(null, animate);
         }
 
-        public override void ShowScreen<TProps>(IPanelController screen, TProps properties) {
-            screen.Show(properties);
+        public override void ShowScreen<TProps>(IPanelController screen, TProps properties, bool animate = true) {
+            screen.Show(properties, animate);
         }
 
-        public override void HideScreen(IPanelController screen) {
-            screen.Hide();
+        public override void HideScreen(IPanelController screen, bool animate = true) {
+            screen.Hide(animate);
         }
 
         public bool IsPanelVisible(string panelId) {

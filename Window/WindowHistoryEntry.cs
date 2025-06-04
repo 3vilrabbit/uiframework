@@ -1,4 +1,6 @@
-﻿namespace deVoid.UIFramework {
+﻿using UnityEngine;
+
+namespace deVoid.UIFramework {
     /// <summary>
     /// An entry for controlling window history and queue
     /// </summary>
@@ -12,8 +14,9 @@
             Properties = properties;
         }
 
-        public void Show() {
-            Screen.Show(Properties);
+        public void Show(bool animate = true) {
+            Debug.Log($"Show {Screen.ScreenId}");
+            Screen.Show(Properties, animate);
         }
     }
 }

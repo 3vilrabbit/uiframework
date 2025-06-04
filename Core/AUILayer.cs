@@ -13,7 +13,7 @@ namespace deVoid.UIFramework {
         /// Shows a screen
         /// </summary>
         /// <param name="screen">The ScreenController to show</param>
-        public abstract void ShowScreen(TScreen screen);
+        public abstract void ShowScreen(TScreen screen, bool animate = true);
 
         /// <summary>
         /// Shows a screen passing in properties
@@ -21,13 +21,13 @@ namespace deVoid.UIFramework {
         /// <param name="screen">The ScreenController to show</param>
         /// <param name="properties">The data payload</param>
         /// <typeparam name="TProps">The type of the data payload</typeparam>
-        public abstract void ShowScreen<TProps>(TScreen screen, TProps properties) where TProps : IScreenProperties;
+        public abstract void ShowScreen<TProps>(TScreen screen, TProps properties, bool animate = true) where TProps : IScreenProperties;
 
         /// <summary>
         /// Hides a screen
         /// </summary>
         /// <param name="screen">The ScreenController to be hidden</param>
-        public abstract void HideScreen(TScreen screen);
+        public abstract void HideScreen(TScreen screen, bool animate = true);
 
         /// <summary>
         /// Initialize this layer
@@ -78,10 +78,10 @@ namespace deVoid.UIFramework {
         /// and shows it.
         /// </summary>
         /// <param name="screenId">The desired ScreenId</param>
-        public void ShowScreenById(string screenId) {
+        public void ShowScreenById(string screenId, bool animate = true) {
             TScreen ctl;
             if (registeredScreens.TryGetValue(screenId, out ctl)) {
-                ShowScreen(ctl);
+                ShowScreen(ctl, animate);
             }
             else {
                 Debug.LogError("[AUILayerController] Screen ID " + screenId + " not registered to this layer!");
@@ -95,10 +95,10 @@ namespace deVoid.UIFramework {
         /// <param name="screenId">The Screen Id (by default, it's the name of the Prefab)</param>
         /// <param name="properties">The data payload for this screen to use</param>
         /// <typeparam name="TProps">The type of the Properties class this screen uses</typeparam>
-        public void ShowScreenById<TProps>(string screenId, TProps properties) where TProps : IScreenProperties {
+        public void ShowScreenById<TProps>(string screenId, TProps properties, bool animate = true) where TProps : IScreenProperties {
             TScreen ctl;
             if (registeredScreens.TryGetValue(screenId, out ctl)) {
-                ShowScreen(ctl, properties);
+                ShowScreen(ctl, properties, animate);
             }
             else {
                 Debug.LogError("[AUILayerController] Screen ID " + screenId + " not registered!");
@@ -110,10 +110,10 @@ namespace deVoid.UIFramework {
         /// and hides it
         /// </summary>
         /// <param name="screenId">The id for this screen (by default, it's the name of the Prefab)</param>
-        public void HideScreenById(string screenId) {
+        public void HideScreenById(string screenId, bool animate = true) {
             TScreen ctl;
             if (registeredScreens.TryGetValue(screenId, out ctl)) {
-                HideScreen(ctl);
+                HideScreen(ctl, animate);
             }
             else {
                 Debug.LogError("[AUILayerController] Could not hide Screen ID " + screenId + " as it is not registered to this layer!");

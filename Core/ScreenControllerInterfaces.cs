@@ -8,9 +8,13 @@ namespace deVoid.UIFramework {
         string ScreenId { get; set; }
         bool IsVisible { get; }
 
-        void Show(IScreenProperties props = null);
+        void Show(IScreenProperties props = null, bool animate = true);
         void Hide(bool animate = true);
 
+        void ToForeground();
+        
+        void ToBackground();
+        
         Action<IUIScreenController> InTransitionFinished { get; set; }
         Action<IUIScreenController> OutTransitionFinished { get; set; }
         Action<IUIScreenController> CloseRequest { get; set; }
